@@ -52,7 +52,6 @@ public class Main {
     static String EnterUserWord(){
         System.out.println("Введи слово");      //Вывод приглашения ввести слово
         String UserWord = sc.nextLine();        //Инициализация переменной, хранящей прочитанное с клавиатуры слово
-        sc.close();                             //Закрытие сканнера
         return UserWord;                        //Возвращение введенного слова в метод main();
     }
 
