@@ -11,36 +11,23 @@ public class Main {
                 "mango", "mushroom", "nut", "olive", "pea", "peanut", "pear", "pepper",
                 "pineapple", "pumpkin", "potato"};
 
-        String randomWord = FindRandWord(words);                                            //Инициализация переменной с записанным выбранным случайным словом.
-        String UserWord;                                                                    //Объявление переменной для хранения введенного пользователем слова
+        String randomWord = findRandWord(words);                                            //Инициализация переменной с записанным выбранным случайным словом.
+        String userWord;                                                                    //Объявление переменной для хранения введенного пользователем слова
         int score = 0;                                                                      //Инициализация переменной для подсчёта кол-ва попыток
 
         do {                                                                                //Начало игрового цикла
-            UserWord = EnterUserWord();                                                     //Запись в переменную введенного с клавиатуры слова
+            userWord = enterUserWord();                                                     //Запись в переменную введенного с клавиатуры слова
             score++;                                                                        //Учет сделанной попытки угадать слово
-            if (randomWord.equals(UserWord) == true) {                                      //Если слово угадано - вывести поюедную надпись
-                System.out.println("Правильно!");
-                System.out.println("Было загадано слово " + randomWord);
-                System.out.println("Ты угадал слово с " + score + " попыток");
+            if (randomWord.equals(userWord) == true) {
+                win(randomWord, score);                                                     //Если слово угадано - вывести победный метод
             } else {
-                for (int i = 0; i < 15; i++) {                                              //Если слово не угадано - запустить цикл для посимвольного сравнения
-                    if (i < randomWord.length() && i < UserWord.length()) {                 //Если счётчик цикла меньше длины загаднного и введенного слов
-                        if (UserWord.charAt(i) == randomWord.charAt(i)) {                   //То проверить равенство i-ого символа в загаданном и введенном слове
-                            System.out.print(UserWord.charAt(i));                           //Если равно - напечатать символ
-                        } else {
-                            System.out.print("#");                                          //Если не равно - напечатать диез
-                        }
-                    } else {                                                                //Условие выполнится, если счётчик превысил длину загаднанного или введенного слова
-                        System.out.print("#");                                              //Напечатает диез
-                    }
+                wrong(userWord, randomWord);
                 }
-            }
-            System.out.println();                                                           //Переход на следующую строку
-        } while (randomWord.equals(UserWord) == false);                                     //Условие повторения цикла
+        } while (randomWord.equals(userWord) == false);                                     //Условие повторения цикла
     }
 
     //Метод для выбора случайного слова из массива
-    static String FindRandWord (String [] words) {
+    static String findRandWord (String [] words) {
         Random rand = new Random();                           //Объявление переменной типа Random
         return  words[rand.nextInt(words.length-1)];    //Возвращение случайного слова в метод main()
     }
@@ -49,11 +36,32 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
 
     //Метод ля ввода слова с клавиатуры
-    static String EnterUserWord(){
+    static String enterUserWord(){
         System.out.println("Введи слово");      //Вывод приглашения ввести слово
-        String UserWord = sc.nextLine();        //Инициализация переменной, хранящей прочитанное с клавиатуры слово
-        return UserWord;                        //Возвращение введенного слова в метод main();
+        String userWord = sc.nextLine();        //Инициализация переменной, хранящей прочитанное с клавиатуры слово
+        return userWord;                        //Возвращение введенного слова в метод main();
     }
 
+    //Победный метод
+    static void win (String randomWord, int score){
+        System.out.println("Правильно!");
+        System.out.println("Было загадано слово " + randomWord);                  //Выводит загаданное слово
+        System.out.println("Ты угадал слово с " + score + " попыток");            //Выводит количество попыток, за которое слово было отгадано
+    }
 
+    //Ругательный метод в случае неправильного ответа
+    static void wrong (String userWord, String randomWord){
+        for (int i = 0; i < 15; i++) {                                              //Если слово не угадано - запустить цикл для посимвольного сравнения
+            if (i < randomWord.length() && i < userWord.length()) {                 //Если счётчик цикла меньше длины загаднного и введенного слов
+                if (userWord.charAt(i) == randomWord.charAt(i)) {                   //То проверить равенство i-ого символа в загаданном и введенном слове
+                    System.out.print(userWord.charAt(i));                           //Если равно - напечатать символ
+                } else {
+                    System.out.print("#");                                          //Если не равно - напечатать диез
+                }
+            } else {                                                                //Условие выполнится, если счётчик превысил длину загаднанного или введенного слова
+                System.out.print("#");                                              //Напечатает диез
+            }
+        }
+        System.out.println();                                                        //Переход на следующую строку
+    }
 }
