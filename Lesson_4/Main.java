@@ -9,7 +9,7 @@ public class Main {
     }
 
     //Игра крестики-нолики
-    static void TicTacToy(){                        //Метод запускающий игру
+    static void TicTacToy() {                        //Метод запускающий игру
         int mapSize = 5;                            //Переменная с размером игрового поля
         int signsToWin = 4;                         //Переменная с победным кол-вом фишек в ряд
         char[][] map = new char[mapSize][mapSize];  //Объявление массива с игровым полем
@@ -18,11 +18,14 @@ public class Main {
         char[] aiSigns = {'O', 'V', '|'};           //Инициализация массива с символами игроков ИИ
         char currentSign;                           //Объявление переменной для хранения символа ходящего игрока
 
-        do {                                                                            //Глобальный игровой цикл. Отвечает за перезапуск игры
+        do
+        {                                                                            //Глобальный игровой цикл. Отвечает за перезапуск игры
             initMap(map, emptySign);                                                    //Вызов метода инициализирующего игровое поле
-            currentSign  = userSign;                                                    //Первый ход в раунде отдается человеку
-            do {                                                                        //Внутренний цикл. Отвечает за выполнение одного хода
-                if (currentSign == userSign) printMap(map);                             //Если ход человека - то выполни метод для печати поля
+            currentSign = userSign;                                                    //Первый ход в раунде отдается человеку
+            do
+            {                                                                        //Внутренний цикл. Отвечает за выполнение одного хода
+                if (currentSign == userSign)
+                    printMap(map);                             //Если ход человека - то выполни метод для печати поля
                 newTurn(map, userSign, emptySign, currentSign, aiSigns, signsToWin);    //Выполни метод нового хода
                 if (checkWin(map, currentSign, mapSize, signsToWin)) {                  //Просканируй поле на предмет выигрышной комбинации
                     printMap(map);                                                      //Если выигрыш есть - напечатай поле
@@ -99,7 +102,8 @@ public class Main {
     static boolean checkFullMap(char[][] map, char emptySign) {
         for (int i = 0; i < map.length; i++) {                  //Проходим циклами все ячейки массива
             for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j] == emptySign) return false;       //Как только встречается пустая - цикл не выполняется. Можно играть дальше
+                if (map[i][j] == emptySign)
+                    return false;       //Как только встречается пустая - цикл не выполняется. Можно играть дальше
             }
         }
         System.out.println("Поле заполнено! Ничья");
@@ -144,70 +148,72 @@ public class Main {
 
     //Метод для выяснения желания сыграть еще раз
     static boolean restart() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Повторить игру? 1 - да / 0 - нет");
-        return sc.nextInt() == 1;
+        Scanner sc = new Scanner(System.in);                    //Инициализация сканнера
+        System.out.println("Повторить игру? 1 - да / 0 - нет"); //Пояснительная надпись
+        return sc.nextInt() == 1;                               //Возвращает true если пользователь ввел 1
     }
 
     //Метод хода игрока
     static void userTurn(char[][] map, char userSign, char emptySign, char currentSign) {
-        int x;
-        int y;
-        do {
-            y = inputCoordinate('x', map.length) - 1;
-            x = inputCoordinate('y', map.length) - 1;
-        } while (!occupateCoordinate(map, x, y, emptySign, userSign, currentSign));
-        map[x][y] = userSign;
-        System.out.println(String.format("Ты поставил фишку в [%d|%d]", y + 1, x + 1));
+        int x;                                                                              //Объявление переменной X
+        int y;                                                                              //Объявление переменной Y
+        do
+        {                                                                                //Цикл с постусловием для корректного ввода переменной юзером
+            y = inputCoordinate('x', map.length) - 1;                                       //Выполнить метод ввода координаты X. Записать в ячейку значение с декрементом 1 для перехода к индексу массива
+            x = inputCoordinate('y', map.length) - 1;                                       //Выполнить метод ввода координаты Y. Записать в ячейку значение с декрементом 1 для перехода к индексу массива
+        } while (!occupateCoordinate(map, x, y, emptySign, userSign, currentSign));         //Цикл работает до тех пор, пока пользователь не укажет свободную ячейку на поле (проверяется методом)
+        map[x][y] = userSign;                                                               //Записать фишку человека в массив по заданным пользователем координатам
+        System.out.println(String.format("Ты поставил фишку в [%d|%d]", y + 1, x + 1));     //Вывести справочную надпись с указанием введенных пользователем координат
     }
 
     //Метод ввода координат игроком через консоль
     static int inputCoordinate(char coordName, int size) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println(String.format("Введите координату %s от 1 до %s", coordName, size));
-        int coord = sc.nextInt();
-        while (!correctInput(coord, size)) {
-            System.out.println(String.format("Координата %s  введена не корректно. Введите %s от 1 до %s", coordName, coordName, size));
-            coord = sc.nextInt();
+        Scanner sc = new Scanner(System.in);                                                    //Инициализация сканнера
+        System.out.println(String.format("Введите координату %s от 1 до %s", coordName, size)); //Вывод приглашающей к вводу координаты надписи
+        int coord = sc.nextInt();                                                               //Запись введенной координаты в переменную
+        while (!correctInput(coord, size)) {                                                    //Цикл с предусловием. Работает до тех пор, пока пользователь вводит координаты вне границ поля (проверяется методом)
+            System.out.println(String.format("Координата %s  введена не корректно. Введите %s от 1 до %s", coordName, coordName, size));    //Вывод ругательной надписи о выходе координаты за границы массива
+            coord = sc.nextInt();                                                               //Перезапись введенной координаты пользователем
         }
-        return coord;
+        return coord;                                                                           //Возвращает проверенное на попадание в массив значение координаты
     }
 
     //Проверка попадания введенных координат в игровое поле
     static boolean correctInput(int coord, int size) {
-        return coord <= size && coord >= 0;
+        return coord <= size && coord > 0;                     //Возвращает True если координата меньше/равна размеру строки(столбца) и больше нуля
     }
 
     //Метод для проверки свободности ячейки, в которую игрок намеревается поставить свою фишку
     static boolean occupateCoordinate(char[][] map, int x, int y, char emptySign, char userSign, char currentSign) {
-        if (map[x][y] == emptySign) {
-            return true;
-        } else {
-            if (currentSign == userSign) {
-                System.out.println(String.format("Координата [%d|%d] занята. Выбери другую ячейку", y + 1, x + 1));     //Вывод пояснительной строки только для человека
+        if (map[x][y] == emptySign) {                                                                                   //Если ячейка с пользовательскими координатами занята символом пустой ячейки
+            return true;                                                                                                //Вернуть True
+        } else {                                                                                                        //Иначе
+            if (currentSign == userSign) {                                                                              //Проверка текущего символа. Если это символ человека
+                System.out.println(String.format("Координата [%d|%d] занята. Выбери другую ячейку", y + 1, x + 1));     //Вывести ругательную строку
             }
-            return false;
+            return false;                                                                                               //И для человека, и для ИИ вернуть False
         }
     }
 
     //Метод хода ИИ
     static void compTurn(char currentSign, char[][] map, int size, char emptySign, char userSign, char[] aiSigns, int signsToWin) {
-        Random rnd = new Random();
-        int x;
-        int y;
-        do {
-            x = rnd.nextInt(size);
-            y = rnd.nextInt(size);
+        Random rnd = new Random();                                                              //Инициализация генератора псевдослучайных чисел
+        int x;                                                                                  //Объявление переменной X
+        int y;                                                                                  //Объявление переменной Y
+        do
+        {                                                                                    //Цикл с постусловием для координат ячейки
+            x = rnd.nextInt(size);                                                              //Генерация координаты X
+            y = rnd.nextInt(size);                                                              //Генерация координаты Y
         } while (!occupateCoordinate(map, x, y, emptySign, userSign, currentSign));             //Цикл выполняется пока не найдется свободная ячейка
         if (!blockTurnEnemy(map, aiSigns, userSign, signsToWin, currentSign, emptySign)) {      //Если метод блокировки ходов ничего не нашел
             writeAiCoordinates(map, x, y, currentSign);                                         //Заполни случайную ячейку, найденную выше
         }
     }
 
-    //Метод для заполения ячейки координатамии ИИ
-    static void writeAiCoordinates(char [][] map, int x, int y, char currentSign){
-        map[x][y] = currentSign;
-        System.out.println(String.format("Игрок [%s] поставил фишку в [%d|%d]", currentSign, y + 1, x + 1));
+    //Метод записи найденной ИИ ячейки в массив
+    static void writeAiCoordinates(char[][] map, int x, int y, char currentSign) {
+        map[x][y] = currentSign;                                                                                //Запись символа ИИ в массив по сгенерированным координатам
+        System.out.println(String.format("Игрок [%s] поставил фишку в [%d|%d]", currentSign, y + 1, x + 1));    //Вывод справочной надписи с ходом ИИ
     }
 
     /*Алгоритм работы ИИ
@@ -223,72 +229,74 @@ public class Main {
 
 //1 этап
 
-        if (findBlockTurn(map, userSign, signsToWin, emptySign, currentSign, userSign)) return true;
+        if (findBlockTurn(map, userSign, signsToWin, emptySign, currentSign, userSign)) return true;                            //Если метод поиска блокирующего хода нашел комбинацию человека - вернуть True
 
 //2 этап
 
-        for (int i = 0; i < aiSigns.length; i++) {
-            if (currentSign != aiSigns[i] && (findBlockTurn(map, aiSigns[i], signsToWin, emptySign, currentSign, userSign)))
+        for (int i = 0; i < aiSigns.length; i++) {                                                                              //Цикл для перебора всех ИИ
+            if (currentSign != aiSigns[i] && (findBlockTurn(map, aiSigns[i], signsToWin, emptySign, currentSign, userSign)))    //Если символ игрока в раунде не равен символу в цикле и найден блокирующий ход - вернуть True
                 return true;
         }
 //3 этап
 
-        Random rnd = new Random();
-        for (int i = signsToWin - 1; i >= 2; i--) {
-            if (rnd.nextBoolean() && findBlockTurn(map, userSign, i, emptySign, currentSign, userSign)) return true;
+        Random rnd = new Random();                                                                                               //Инициализация генератора псевдослучайных чисел
+        if (rnd.nextBoolean()) {                                                                                                 //Если рандомное булевое значение равно True - выполнить поиск сокращенной комбинации для блокировки
+            for (int i = signsToWin - 1; i >= 2; i--) {                                                                          //Цикл для реализации сокращения длины блокируемой комбинации до диапазона[2:длина выигрышной комбинации -2]
+                if (findBlockTurn(map, userSign, i, emptySign, currentSign, userSign)) return true;                              //Если блокирующий ход для сокращенной комбинации найден - вернуть True;
+            }
         }
 
 //4 этап
-
-        for (int i = 0; i < aiSigns.length; i++) {
-            for (int j = signsToWin - 1; j >= 2; j--) {
-                if (rnd.nextBoolean() && currentSign != aiSigns[i] && (findBlockTurn(map, aiSigns[i], j, emptySign, currentSign, userSign)))
-                    return true;
+        if (rnd.nextBoolean()) {                                                                                                        //Если рандомное булевое значение равно True - выполнить поиск сокращенной комбинации для блокировки
+            for (int i = 0; i < aiSigns.length; i++) {                                                                                  //Цикл для перебора всех ИИ
+                for (int j = signsToWin - 1; j >= 2; j--) {                                                                             //Цикл для реализации сокращения длины блокируемой комбинации
+                    if (currentSign != aiSigns[i] && (findBlockTurn(map, aiSigns[i], j, emptySign, currentSign, userSign))) return true;//Если символ игрока в раунде не равен символу в цикле и найден блокирующий ход - вернуть True
+                }
             }
         }
-        return false;
+        return false;                                                                                                                   //Если ни одной блокируемой комбинации не найдено - вернуть false
     }
 
     //Метод для поиска линии по которой возможна блокировка хода соперника;
     static boolean findBlockTurn(char[][] map, char taskSign, int taskCombinationLength, char emptySign, char currentSign, char userSign) {
-        if(blockLine(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)){
-            return true;
-        }else if(blockColumn(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)){
-            return true;
-        }else if(blockdiag1(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)){
-            return true;
-        }else if(blockdiag2(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)){
-            return true;
-        }else
-            return false;
+        if (blockLine(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)) {          //Выполнить поиск блокирующего хода по линии
+            return true;                                                                                //Если найден - вернуть True
+        } else if (blockColumn(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)) {  //Выполнить поиск блокирующего хода по столбцу
+            return true;                                                                                //Если найден - вернуть True
+        } else if (blockdiag1(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)) {   //Выполнить поиск блокирующего хода по диагонали слева направо
+            return true;                                                                                //Если найден - вернуть True
+        } else if (blockdiag2(map, taskSign, taskCombinationLength, emptySign, currentSign, userSign)) {   //Выполнить поиск блокирующего хода по диагонали справа налево
+            return true;                                                                                //Если найден - вернуть True
+        } else
+            return false;                                                                               //Если не найден - вернуть False
     }
 
     //Метод для поиска комбинаций соперника по горизонтали
     public static boolean blockLine(char[][] map, char taskSign, int taskCombinationLength, char emptySign, char currentSign, char userSign) {
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map.length; j++) {
-                int di = i;
-                int dj = j;
-                int sum = 0;
-                for (int k = 0; k < taskCombinationLength; k++) {
-                    if (j + k < map.length) {
-                        if (map[i][j + k] == emptySign) {
-                            di = i;
-                            dj = j + k;
+        for (int i = 0; i < map.length; i++) {                                                                                          //Цикл для прохода по строкам ячейка
+            for (int j = 0; j < map.length; j++) {                                                                                      //Цикл для прохода по столбцам ячейки
+                int di = i;                                                                                                             //Записать текущий номер строки стартового элемента проверямой комбинации
+                int dj = j;                                                                                                             //Записать текущий номер столбца стартового элемента проверямой комбинации
+                int sum = 0;                                                                                                            //Инициализировать счетчик суммы элементов в проверяемой комбинации
+                for (int k = 0; k < taskCombinationLength; k++) {                                       //Циклом пробежать по элементам массива на длину проверямой комбинации
+                    if (j + k < map.length) {                                                           //Если проверямый индекс столбца не выходит за границу массива
+                        if (map[i][j + k] == emptySign) {                                               //Сравнить следующий элемент в строке с текущим . Если встречена пустая ячейка
+                            di = i;                                                                     //Перезаписать текущий номер строки стартового элемента на номер строки пустой ячейки
+                            dj = j + k;                                                                 //Перезаписать текущий номер столбца стартового элемента на номер строки пустой ячейки
                         }
-                        if (map[i][j + k] == taskSign){
-                            sum++;
-                        }else if (map[i][j + k] != emptySign){
-                            break;
+                        if (map[i][j + k] == taskSign) {                                                 //Если проверяемая ячейка является целевой для проверямой комбинации и входит в нее
+                            sum++;                                                                      //Увеличить счетчик суммы элементов в комбинации
+                        } else if (map[i][j + k] != emptySign) {                                          //Если значение не целевое и не пустое - оно вражеское. Следовательно комбинация уже заблокирована и проверять ее дальше при
+                            break;                                                                      //текущем стартовом элементе нет смысла. Выход из вложенного цикла пробежки по элементам левее стартового
                         }
                     }
-                    if (sum == taskCombinationLength - 1 && occupateCoordinate(map, di, dj, emptySign, userSign, currentSign)) {
-                        writeAiCoordinates(map, di, dj, currentSign);
-                        return true;
+                    if (sum == taskCombinationLength - 1 && occupateCoordinate(map, di, dj, emptySign, userSign, currentSign)) {    //Если счётчик длины комбинации равен целевому значению минус 1 и ячейка в массиве свобода
+                        writeAiCoordinates(map, di, dj, currentSign);                                                               //Записать фишку ИИ в текущие координаты стартовой либо найденой пустой ячейки в массив поля
+                        return true;                                                                                                //И вернуть значение True
                     }
-                }
-            }
-        }
+                }                                                                                                                   //Закрытие цикла пробежки на длину комбинации от стартового элоемента
+            }                                                                                                                       //Смена номера столбца стартовой ячейки
+        }                                                                                                                           //Смена номера строки стартовой ячейки
         return false;
     }
 
@@ -305,9 +313,9 @@ public class Main {
                             di = i + k;
                             dj = j;
                         }
-                        if (map[i + k][j] == taskSign){
+                        if (map[i + k][j] == taskSign) {
                             sum++;
-                        }else if (map[i + k][j] != emptySign){
+                        } else if (map[i + k][j] != emptySign) {
                             break;
                         }
                     }
@@ -334,9 +342,9 @@ public class Main {
                             di = i + k;
                             dj = j + k;
                         }
-                        if (map[i + k][j + k] == taskSign){
+                        if (map[i + k][j + k] == taskSign) {
                             sum++;
-                        }else if (map[i + k][j + k] != emptySign) {
+                        } else if (map[i + k][j + k] != emptySign) {
                             break;
                         }
                     }
@@ -365,7 +373,7 @@ public class Main {
                         }
                         if (map[i - k][j + k] == taskSign) {
                             sum++;
-                        }else if (map[i - k][j + k] != emptySign) {
+                        } else if (map[i - k][j + k] != emptySign) {
                             break;
                         }
                     }
