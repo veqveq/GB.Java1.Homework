@@ -5,37 +5,120 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        TicTacToy();                        //Запуск игры;
+        TicTacToy();                                                        //Запуск игры;
+    }
+
+    //Метод ввода числа с клавиатуры
+    static int inputValue(){
+        Scanner sc = new Scanner(System.in);
+        return sc.nextInt();
+    }
+
+    //Метод поиска случайного числа
+    static int randomValue(int MaxValue){
+        Random rnd = new Random();
+        return rnd.nextInt(MaxValue);
     }
 
     //Игра крестики-нолики
-    static void TicTacToy() {                        //Метод запускающий игру
-        int mapSize = 5;                            //Переменная с размером игрового поля
-        int signsToWin = 4;                         //Переменная с победным кол-вом фишек в ряд
-        char[][] map = new char[mapSize][mapSize];  //Объявление массива с игровым полем
-        char emptySign = '-';                       //Символ пустой клетки поля
-        char userSign = 'X';                        //Символ пользователя
-        char[] aiSigns = {'O', 'V', '|'};           //Инициализация массива с символами игроков ИИ
-        char currentSign;                           //Объявление переменной для хранения символа ходящего игрока
+    static void TicTacToy() {                                               //Метод запускающий игру
+        char[] signs = {'O', 'V', '|', 'P', 'E', 'W', 'T', 'S', '%', 'H'};  //Инициализация массива с символами для игроков ИИ
+        char[] aiSigns = {'O'};
+        int mapSize = 3;
+        int signsToWin = 3;
 
-        do
-        {                                                                            //Глобальный игровой цикл. Отвечает за перезапуск игры
-            initMap(map, emptySign);                                                    //Вызов метода инициализирующего игровое поле
-            currentSign = userSign;                                                    //Первый ход в раунде отдается человеку
-            do
-            {                                                                        //Внутренний цикл. Отвечает за выполнение одного хода
-                if (currentSign == userSign)
-                    printMap(map);                             //Если ход человека - то выполни метод для печати поля
-                newTurn(map, userSign, emptySign, currentSign, aiSigns, signsToWin);    //Выполни метод нового хода
-                if (checkWin(map, currentSign, mapSize, signsToWin)) {                  //Просканируй поле на предмет выигрышной комбинации
-                    printMap(map);                                                      //Если выигрыш есть - напечатай поле
-                    identificationWinner(currentSign, userSign, aiSigns);               //Выполни метод по идентификации победителя
-                    break;                                                              //И выйди из внутреннего цикла во внешний. Раунд закончен
-                }
-                currentSign = rotateSign(currentSign, userSign, aiSigns);               //Если победы нет - передай ход другому игроку
-            } while (!checkFullMap(map, emptySign));                                    //Внутренний цикл выполняется пока на поле есть свободные ячейки
-        } while (restart());                                                            //Внешний цикл выполняется пока пользователь согласен сыграть еще
+        System.out.println("Привет, хомо");
+        System.out.println("Это игра крестики-нолики");
+        System.out.println("************************");
+        System.out.println();
+//        int startChange;
+        while (startScreen() == 2){
+            System.out.println(String.format("Размер поля: %d x %d | Количество ботов: %d | Длина ряда для победы: %d",mapSize,mapSize,aiSigns.length,signsToWin));
+//            startChange = startScreen();
+            aiSigns = changeLotPlayers(signs);
+            mapSize = changeMapSize();
+            signsToWin = changeWinLineLength(mapSize);
+            char[][] map = new char[mapSize][mapSize];                          //Объявление массива с игровым полем
+        }
+        game(mapSize,signsToWin,aiSigns);
     }
+    
+    //Метод выбора количества игроков
+    static char[] changeLotPlayers(char [] signs){
+        System.out.println("Выбери количество ботов от 1 до 10");
+        int LotPlayers = inputValue();
+        while (!correctInput(LotPlayers,10)){
+            System.out.println("Количество ботов введено некорректно. Введи количество игроков заново");
+            LotPlayers = inputValue();
+        }
+        char [] aiPlayers = new char[LotPlayers];
+        for (int i = 0; i < LotPlayers; i++) {
+            aiPlayers[i] = signs[i];
+        }
+        return aiPlayers;
+    }
+
+    //Метод выбора длины победной серии
+    static int changeWinLineLength(int size){
+        System.out.println(String.format("Cколько фишек в ряду должно быть для победы? (не более размера поля = %d)",size));
+        int winLine = inputValue();
+        while (!correctInput(winLine,size)){
+            System.out.println("Длина серии введена некорректно! Повтори ввод.");
+            winLine = inputValue();
+        }
+        return winLine;
+    }
+
+    //Метод выбора размера поля
+    static int changeMapSize(){
+        System.out.println("Выбери размер поля. Минимальный размер 3х3");
+        System.out.println("Введи длину стороны");
+        int mapSize = inputValue();
+        while(mapSize<3){
+            System.out.println("Размер введен некорректно! Минимальный размер поля 3х3");
+            System.out.println("Введи размер поля заново!");
+            mapSize = inputValue();
+        }
+        return mapSize;
+    }
+
+    //Метод вывода стартового экрана
+    static int startScreen(){
+        int userChange;
+        do {
+            System.out.println("1. Начать игру");
+            System.out.println("2. Изменить настройки");
+            userChange = inputValue();
+        }while (!correctInput(userChange,2));
+        return userChange;
+    }
+
+    //Метод реализации игрового цикла
+        static void game(int mapSize, int signsToWin, char[] aiSigns){
+            char emptySign = '-';                                                           //Символ пустой клетки поля
+            char userSign = 'X';                                                            //Символ пользователя
+            char currentSign;                                                               //Объявление переменной для хранения символа ходящего игрока
+            char[][] map = new char[mapSize][mapSize];                                      //Объявление массива с игровым полем
+            do
+            {                                                                               //Глобальный игровой цикл. Отвечает за перезапуск игры
+                initMap(map, emptySign);                                                    //Вызов метода инициализирующего игровое поле
+                currentSign = userSign;                                                     //Первый ход в раунде отдается человеку
+                do
+                {                                                                           //Внутренний цикл. Отвечает за выполнение одного хода
+                    if (currentSign == userSign)
+                        printMap(map);                                                      //Если ход человека - то выполни метод для печати поля
+                    newTurn(map, userSign, emptySign, currentSign, aiSigns, signsToWin);    //Выполни метод нового хода
+                    if (checkWin(map, currentSign, mapSize, signsToWin)) {                  //Просканируй поле на предмет выигрышной комбинации
+                        printMap(map);                                                      //Если выигрыш есть - напечатай поле
+                        identificationWinner(currentSign, userSign, aiSigns);               //Выполни метод по идентификации победителя
+                        break;                                                              //И выйди из внутреннего цикла во внешний. Раунд закончен
+                    }
+                    currentSign = rotateSign(currentSign, userSign, aiSigns);               //Если победы нет - передай ход другому игроку
+                } while (!checkFullMap(map, emptySign));                                    //Внутренний цикл выполняется пока на поле есть свободные ячейки
+            } while (restart());                                                            //Внешний цикл выполняется пока пользователь согласен сыграть еще
+        }
+
+
 
     //Метод для инициализации чистого поля
     static void initMap(char[][] map, char emptySign) {
@@ -148,9 +231,8 @@ public class Main {
 
     //Метод для выяснения желания сыграть еще раз
     static boolean restart() {
-        Scanner sc = new Scanner(System.in);                    //Инициализация сканнера
         System.out.println("Повторить игру? 1 - да / 0 - нет"); //Пояснительная надпись
-        return sc.nextInt() == 1;                               //Возвращает true если пользователь ввел 1
+        return inputValue() == 1;                               //Возвращает true если пользователь ввел 1
     }
 
     //Метод хода игрока
@@ -168,12 +250,11 @@ public class Main {
 
     //Метод ввода координат игроком через консоль
     static int inputCoordinate(char coordName, int size) {
-        Scanner sc = new Scanner(System.in);                                                    //Инициализация сканнера
         System.out.println(String.format("Введите координату %s от 1 до %s", coordName, size)); //Вывод приглашающей к вводу координаты надписи
-        int coord = sc.nextInt();                                                               //Запись введенной координаты в переменную
+        int coord = inputValue();                                                               //Выполнить метод ввода числа с клавиатуры
         while (!correctInput(coord, size)) {                                                    //Цикл с предусловием. Работает до тех пор, пока пользователь вводит координаты вне границ поля (проверяется методом)
             System.out.println(String.format("Координата %s  введена не корректно. Введите %s от 1 до %s", coordName, coordName, size));    //Вывод ругательной надписи о выходе координаты за границы массива
-            coord = sc.nextInt();                                                               //Перезапись введенной координаты пользователем
+            coord = inputValue();                                                               //Перезапись введенной координаты пользователем
         }
         return coord;                                                                           //Возвращает проверенное на попадание в массив значение координаты
     }
@@ -197,13 +278,12 @@ public class Main {
 
     //Метод хода ИИ
     static void compTurn(char currentSign, char[][] map, int size, char emptySign, char userSign, char[] aiSigns, int signsToWin) {
-        Random rnd = new Random();                                                              //Инициализация генератора псевдослучайных чисел
         int x;                                                                                  //Объявление переменной X
         int y;                                                                                  //Объявление переменной Y
         do
         {                                                                                    //Цикл с постусловием для координат ячейки
-            x = rnd.nextInt(size);                                                              //Генерация координаты X
-            y = rnd.nextInt(size);                                                              //Генерация координаты Y
+            x = randomValue(size);                                                              //Генерация координаты X
+            y = randomValue(size);                                                              //Генерация координаты Y
         } while (!occupateCoordinate(map, x, y, emptySign, userSign, currentSign));             //Цикл выполняется пока не найдется свободная ячейка
         if (!blockTurnEnemy(map, aiSigns, userSign, signsToWin, currentSign, emptySign)) {      //Если метод блокировки ходов ничего не нашел
             writeAiCoordinates(map, x, y, currentSign);                                         //Заполни случайную ячейку, найденную выше
@@ -218,10 +298,11 @@ public class Main {
 
     /*Алгоритм работы ИИ
      *Алгоритм работы:
-     * На 1 этапе проверяются и блокируются все комбинации, выстроенные на поле игроком, в которых до победы осталось поставить одну фишку
-     * На 2 этапе проверяются и блокируются все предпобедные комбинации других ИИ
-     * На 3 этапе циклически проверяются все комбинации игрока, содержащие не менее 2 символов в комбинации. Данная проверка выполняется с вероятностью 50%
-     * На 4 этапе циклически проверяются все комбинации всех ИИ, содержащие не менее 2 символов в комбинации. Данная проверка выполняется с вероятностью 50%
+     * На 1 этапе ищется предвыигрышная комбинация у текущего ИИ. Если такая найдена - поставить фишку
+     * На 2 этапе проверяются и блокируются все комбинации, выстроенные на поле игроком, в которых до победы осталось поставить одну фишку
+     * На 3 этапе проверяются и блокируются все предпобедные комбинации других ИИ
+     * На 4 этапе циклически проверяются все комбинации игрока, содержащие не менее 2 символов в комбинации. Данная проверка выполняется с вероятностью 50%
+     * На 5 этапе циклически проверяются все комбинации всех ИИ, содержащие не менее 2 символов в комбинации. Данная проверка выполняется с вероятностью 50%
      * Если не один из этапов не выполнен, считается что блокировать нечего и фишка ставится случайным образом
      * */
 
@@ -229,25 +310,28 @@ public class Main {
 
 //1 этап
 
-        if (findBlockTurn(map, userSign, signsToWin, emptySign, currentSign, userSign)) return true;                            //Если метод поиска блокирующего хода нашел комбинацию человека - вернуть True
+        if (findBlockTurn(map, currentSign, signsToWin, emptySign, currentSign, userSign)) return true;                         //Поиск предвыигрышной комбинации у текущего ИИ
 
 //2 этап
+
+        if (findBlockTurn(map, userSign, signsToWin, emptySign, currentSign, userSign)) return true;                            //Если метод поиска блокирующего хода нашел комбинацию человека - вернуть True
+
+//3 этап
 
         for (int i = 0; i < aiSigns.length; i++) {                                                                              //Цикл для перебора всех ИИ
             if (currentSign != aiSigns[i] && (findBlockTurn(map, aiSigns[i], signsToWin, emptySign, currentSign, userSign)))    //Если символ игрока в раунде не равен символу в цикле и найден блокирующий ход - вернуть True
                 return true;
         }
-//3 этап
+//4 этап
 
-        Random rnd = new Random();                                                                                               //Инициализация генератора псевдослучайных чисел
-        if (rnd.nextBoolean()) {                                                                                                 //Если рандомное булевое значение равно True - выполнить поиск сокращенной комбинации для блокировки
+        if (randomValue(2) == 0) {                                                                                      //Если рандомное значение равно 0 - выполнить поиск сокращенной комбинации для блокировки
             for (int i = signsToWin - 1; i >= 2; i--) {                                                                          //Цикл для реализации сокращения длины блокируемой комбинации до диапазона[2:длина выигрышной комбинации -2]
                 if (findBlockTurn(map, userSign, i, emptySign, currentSign, userSign)) return true;                              //Если блокирующий ход для сокращенной комбинации найден - вернуть True;
             }
         }
 
-//4 этап
-        if (rnd.nextBoolean()) {                                                                                                        //Если рандомное булевое значение равно True - выполнить поиск сокращенной комбинации для блокировки
+//5 этап
+        if (randomValue(2) == 0) {                                                                                             //Если рандомное значение равно 0 - выполнить поиск сокращенной комбинации для блокировки
             for (int i = 0; i < aiSigns.length; i++) {                                                                                  //Цикл для перебора всех ИИ
                 for (int j = signsToWin - 1; j >= 2; j--) {                                                                             //Цикл для реализации сокращения длины блокируемой комбинации
                     if (currentSign != aiSigns[i] && (findBlockTurn(map, aiSigns[i], j, emptySign, currentSign, userSign))) return true;//Если символ игрока в раунде не равен символу в цикле и найден блокирующий ход - вернуть True
