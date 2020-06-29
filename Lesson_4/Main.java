@@ -37,8 +37,7 @@ public class Main {
 //            startChange = startScreen();
             aiSigns = changeLotPlayers(signs);
             mapSize = changeMapSize();
-            signsToWin = changeWinLineLength(mapSize);
-            char[][] map = new char[mapSize][mapSize];                          //Объявление массива с игровым полем
+            signsToWin = changeWinLineLength(mapSize);      
         }
         game(mapSize,signsToWin,aiSigns);
     }
