@@ -9,12 +9,18 @@ public class ButtonListener implements ActionListener {
     private final JLabel input;                                         //Объявление поля ввод
     private final JLabel history;                                       //Объявление поля вывод истории
     private final JLabel answer;                                        //Объявление поля ответ
+    private final JLabel memory;                                        //Объявление поля памяти калькулятора
+    private final JLabel memoryIndicate;                                //Объявление поля с индикатором нахождения данных в памяти калькулятора
     private final StringBuilder text = new StringBuilder();             //Объявление поля с конструктором строк
+    private boolean rewrite = true;                                     //Объявление переменной, разрешающей запрещающей перезапись поля ввод
 
-    public ButtonListener(JLabel input, JLabel history, JLabel answer) {    //Конструктор класса слушатель кнопок
+
+    public ButtonListener(JLabel input, JLabel history, JLabel answer, JLabel memory, JLabel memoryIndicate) {    //Конструктор класса слушатель кнопок
         this.input = input;
         this.history = history;
         this.answer = answer;
+        this.memory = memory;
+        this.memoryIndicate = memoryIndicate;
     }
 
     @Override
@@ -22,6 +28,8 @@ public class ButtonListener implements ActionListener {
         JButton currentButton = (JButton) e.getSource();        //Прием в класс параметров нажатой кнопки и присвоение их созданной кнопке currentButton
         if (!checkSign(currentButton.getText())) {              //Если имя кнопки не является символом
             listenNumbers(currentButton);                       //Выполнить метод слушания действий для цифр
+        } else if (currentButton.getText().charAt(0) == 'M') {  //Иначе если первый символ на нажатой кнопке M
+            listenMemory(currentButton);                        //Выполнить метод слушания действий для кнопок работы с памятью
         } else {                                                //Иначе
             listenSigns(currentButton);                         //Выполнить метод слушания действий для символов
         }
@@ -29,17 +37,9 @@ public class ButtonListener implements ActionListener {
 
     //Метод слушания действий для цифр
     private void listenNumbers(JButton currentButton) {
-        if (Double.parseDouble(input.getText()) == Double.parseDouble(answer.getText())) {          //Если значение в поле ввод совпадает с полем история
-            this.input.setText("0");                            //Вывести в поле ввод ноль
-        }
-
-        if (Double.parseDouble(input.getText()) != Double.parseDouble(answer.getText()) && history.getText().indexOf('=') != -1) {     //Если значение в поле ввод не совпадает с полем история и в истории есть знак равно
-            this.history.setText("0");                                                              //Вывести в поле история ноль
-            this.answer.setText("0");                                                               //Вывести в поле ввод ноль
-        }
-
-        if (input.getText().charAt(0) == '0') {                    //Если значение в поле ввод равно нулю
+        if (rewrite) {                                             //Если разрешена перезапись
             this.input.setText(currentButton.getText());           //Записать в поле ввод цифру нажатой кнопки
+            rewrite = false;                                       //Запретить перезапись
         } else {                                                   //Иначе
             text.append(input.getText())                           //Считать в конструктор строк значение из поля ввод
                     .append(currentButton.getText());              //Добавить к нему цифру нажатой кнопки
@@ -64,6 +64,7 @@ public class ButtonListener implements ActionListener {
                 input.setText("0");                                 //Стереть информацию из поля ввод
                 history.setText("0");                               //Стереть информацию из поля история
                 answer.setText("0");                                //Стереть информацию из поля ответ
+                rewrite = true;                                     //Разрешить перезапись
                 break;
 
             case "\u2906":                                                  //Если нажата кнопка <- (стереть)
@@ -74,6 +75,7 @@ public class ButtonListener implements ActionListener {
                     text.setLength(0);                                      //Очистить конструктор
                 } else {                                                    //Если в поле ввод один и меньше символов
                     input.setText("0");                                     //Записать в поле ввод ноль
+                    rewrite = true;                                         //Разрешить перезапись
                 }
                 break;
 
@@ -81,29 +83,53 @@ public class ButtonListener implements ActionListener {
                 if (history.getText().indexOf('=') != -1) {         //Если в поле история уже есть символы равно
                     history.setText(answer.getText());              //Записать в поле история информацию из поля ответ
                     input.setText("0");                             //Записать в поле ввод ноль
+                    rewrite = true;                                 //Разрешить перезапись
                     break;
                 }
-                if (history.getText() == "0" && input.getText() != null) {  //Если в поле история записан ноль, а поле ввод не пустое
-                    history.setText(input.getText());                       //Записать в поле история значение из поля ввод
-                    writeAnswer(String.valueOf(input.getText()));           //Записать в поле ответ значение из поля ввод
+                if (history.getText() == "0" && input.getText() != null) {          //Если в поле история записан ноль, а поле ввод не пустое
+                    history.setText(input.getText());                               //Записать в поле история значение из поля ввод
+                    writeAnswer(String.valueOf(input.getText()), answer);           //Записать в поле ответ значение из поля ввод
+                    rewrite = true;                                                 //Разрешить перезапись
                     break;
                 }
 
                 if (checkSign(String.valueOf(history.getText().charAt(history.getText().length() - 2))) && input.getText() != null) {  //Если в поле история на последнем месте записан символ и поле ввод не пустое
                     char earlySgn = history.getText().charAt(history.getText().length() - 2);         //Записать последний знак в переменную
-                    writeAnswer(String.valueOf(calculation(earlySgn, answer, input)));                //Вычислить результат последнего действия и записать результат в поле ответ
+                    writeAnswer(String.valueOf(calculation(earlySgn, answer, input)), answer);                //Вычислить результат последнего действия и записать результат в поле ответ
                     text.append(history.getText()).                                                   //Считать в конструктор поле история
                             append(input.getText()).                                                  //Добавить к нему содержимое поля ввод
                             append(" = ");                                                            //Добавить знак равно
                     history.setText(text.toString());                                                 //Записать в поле история значение из конструктора
                     input.setText(answer.getText());                                                  //Записать в поле ввод значение из поля ответ
+                    rewrite = true;                                                                   //Разрешить перезапись
                     text.setLength(0);                                                                //Очистить конструктор
                     break;
                 }
 
             default:                                                    //Если нажата кнопка с арифметическим знаком
                 inputMathSign(currentButton.getText().charAt(0));       //Выполнить метод ввод арифметического знака. Аргумент - текст на нажатой кнопке
+                rewrite = true;                                         //Разрешить перезапись
                 break;
+        }
+    }
+
+    //Метод слушания действий для кнопок работы с памятью
+    private void listenMemory(JButton currentButton) {
+        switch (currentButton.getText().charAt(1)) {                    //Проверка множественного условия
+            case 'R':                                                   //Если 2 символ на кнопке R
+                if (!memory.getText().equals("0")) {                    //Если в памяти есть число
+                    input.setText(memory.getText());                    //Записать его в поле ввода
+                }
+                break;
+            case 'C':                                                   //Если 2 символ на кнопке С
+                memory.setText("0");                                    //Очистить память
+                memoryIndicate.setText("");                             //Скрыть индикатор памяти
+                break;
+            default:
+                char earlySgn = currentButton.getText().charAt(1);                              //Записать в переменную 2 символ с названия кнопки (+/-)
+                writeAnswer(String.valueOf(calculation(earlySgn, memory, input)), memory);      //Добавить/вычесть в памяти значение из поля ввод
+                memoryIndicate.setText("M");                                                    //Включить индикатор памяти
+                rewrite = true;                                                                 //Разрешить перезапись
         }
     }
 
@@ -114,7 +140,7 @@ public class ButtonListener implements ActionListener {
                     append(sgn).                                                     //Добавить символ арифметического действия (аргумент метода)
                     append(" ");
             history.setText(text.toString());                                        //Записать в поле история содержимое конструктора
-            writeAnswer(String.valueOf(input.getText()));                            //Записать в поле ответ содержимое поля ввод
+            writeAnswer(String.valueOf(input.getText()), answer);                            //Записать в поле ответ содержимое поля ввод
             text.setLength(0);                                                       //Очистить конструктор
         } else {                                                                     //Иначе, если в поле история не ноль
             if (history.getText().charAt(history.getText().length() - 1) != ' ') {   //Если последний символ в поле история не пробел
@@ -143,7 +169,7 @@ public class ButtonListener implements ActionListener {
                 text.setLength(0);                                                                              //Очистить конструктор
             } else {                                                                                            //Если не выполнено ни одно предыдущее условие
                 char earlySgn = history.getText().charAt(history.getText().length() - 2);                       //Считать в переменную последний символ в строке
-                writeAnswer(String.valueOf(calculation(earlySgn, answer, input)));                              //Записать в поле ответ значение из поля ввод
+                writeAnswer(String.valueOf(calculation(earlySgn, answer, input)), answer);                              //Записать в поле ответ значение из поля ввод
                 text.append(history.getText()).                                                                 //Считать в конструктор поле история
                         append(input.getText()).                                                                //Добавить содержимое поля ввод
                         append(" ").
@@ -186,7 +212,7 @@ public class ButtonListener implements ActionListener {
     }
 
     //Метод для форматирования поля - подавления хвостовых нулей
-    private void writeAnswer(String str) {                              //Аргумент метода - произвольная строка
+    private void writeAnswer(String str, JLabel field) {                //Аргумент метода - произвольная строка, поле для записи отформатированного значения
         char sgn;                                                       //Объявление переменной для хранения символа
         do {                                                            //Старт цикла с постусловием
             sgn = str.charAt(str.length() - 1);                         //Запись последнего символа строки в переменную
@@ -202,6 +228,6 @@ public class ButtonListener implements ActionListener {
             str = text.toString();                                      //Записать значение конструктора в переменную со строкой
         }
         text.setLength(0);                                              //Очистить конструктор
-        answer.setText(str);                                            //Записать значение переменной со строкой в поле ответ
+        field.setText(str);                                             //Записать значение переменной со строкой в поле ответ
     }
 }
