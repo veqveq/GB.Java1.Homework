@@ -23,7 +23,7 @@ public class MyWindow extends JFrame {
         print.setLayout(new GridLayout(2, 1));                //Задание стиля разметки панели ввода вывода
         JLabel history = new JLabel("0", SwingConstants.RIGHT);    //Создание поля для вывода записанного выражения
         JLabel input = new JLabel("0", SwingConstants.RIGHT);      //Создание поля для ввода текщего числа и вывода результата
-        JLabel answer = new JLabel("0");
+        JLabel answer = new JLabel("0");                           //Создание поля для хранения результата вычислений
         history.setFont(new Font("", Font.PLAIN, 30));       //Настройка шрифта поля вывода
         input.setFont(new Font("", Font.BOLD, 80));          //Настройка шрифта поля ввода
         print.add(history);                                            //Добавления поля вывода в панель
