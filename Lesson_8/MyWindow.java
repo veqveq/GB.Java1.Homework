@@ -17,19 +17,22 @@ public class MyWindow extends JFrame {
         JPanel keyboard = new JPanel();                                 //Панель цифровой клавиатуры
         JPanel operations = new JPanel();                               //Панель операторов
 
+        //Задание стилей разметки
         setLayout(new GridLayout(3, 1));                      //Задание стиля разметки страницы
         keyboard.setLayout(new GridLayout(3, 3));             //Задание стиля разметки панели с клавиатурой
         operations.setLayout(new GridLayout(3, 4));           //Задание стиля разметки панели со знаками
         inpPrint.setLayout(new GridLayout(2, 1));             //Задание стиля разметки панели ввода-вывода
         memInpPrint.setLayout(new GridBagLayout());                     //Задание стиля разметки панели ввода-вывода-памяти
 
+        //Задание служебных переменных
+        float answer = 0;                                                   //Создание переменной для хранения результата вычислений
+        float memory = 0;                                                   //Создание переменной для хранения памяти калькулятора
 
-        JLabel history = new JLabel("0", SwingConstants.RIGHT);        //Создание поля для вывода записанного выражения
-        JLabel input = new JLabel("0", SwingConstants.RIGHT);          //Создание поля для ввода текщего числа и вывода результата
-        JLabel answer = new JLabel("0");                               //Создание поля для хранения результата вычислений
-        JLabel memory = new JLabel("0");                               //Создание поля памяти калькулятора
-        JLabel memoryIndicate = new JLabel();                              //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
-        memoryIndicate.setVerticalAlignment(SwingConstants.BOTTOM);        //Настройка выравнивания индикатора памяти калькулятора
+        //Создание графического интерфейса
+        JLabel history = new JLabel("0", SwingConstants.RIGHT);       //Создание поля для вывода записанного выражения
+        JLabel input = new JLabel("0", SwingConstants.RIGHT);         //Создание поля для ввода текщего числа и вывода результата
+        JLabel memoryIndicate = new JLabel();                             //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
+        memoryIndicate.setVerticalAlignment(SwingConstants.BOTTOM);       //Настройка выравнивания индикатора памяти калькулятора
         history.setFont(new Font("", Font.PLAIN, 30));          //Настройка шрифта поля вывода
         input.setFont(new Font("", Font.BOLD, 80));             //Настройка шрифта поля ввода
         memoryIndicate.setFont(new Font("", Font.BOLD, 50));    //Настройка шрифта поля ввода
@@ -39,9 +42,9 @@ public class MyWindow extends JFrame {
         gbc.weighty = 1f;                                                 //Высота контейнера индикатора памяти не фиксирована
         gbc.weightx = 0f;                                                 //Ширина контейнера индикатора памяти фиксирована
         gbc.fill = GridBagConstraints.BOTH;
-        memInpPrint.add(memoryIndicate,gbc);                              //Добавление индикатора памяти в панель ввод-вывод-память
+        memInpPrint.add(memoryIndicate, gbc);                              //Добавление индикатора памяти в панель ввод-вывод-память
         gbc.weightx = 1f;                                                 //Ширина панели ввода-вывода не фиксирована
-        memInpPrint.add(inpPrint,gbc);                                    //Добавление панели ввода-вывода в панель ввод-вывод-память
+        memInpPrint.add(inpPrint, gbc);                                    //Добавление панели ввода-вывода в панель ввод-вывод-память
 
         ButtonListener buttonListener = new ButtonListener(input, history, answer, memory, memoryIndicate);   //Создание слушателя действий для кнопок
 
@@ -71,7 +74,7 @@ public class MyWindow extends JFrame {
 
         for (int i = 0; i < memoryKeys.length; i++) {                               //Цикл для инициализации массива кнопок для работы с памятью
             memoryKeys[i].setFont(new Font("", Font.PLAIN, 18));          //Настройка шрифта кнопки
-            memoryKeys[i].setBackground(new Color(205,205,205));            //Изменение цвета кнопки
+            memoryKeys[i].setBackground(new Color(205, 205, 205));          //Изменение цвета кнопки
             memoryKeys[i].addActionListener(buttonListener);                        //Добавление кнопке слушателя действий
             operations.add(memoryKeys[i]);                                          //Добавление кнопки в панель операций
         }
@@ -90,4 +93,3 @@ public class MyWindow extends JFrame {
         setVisible(true);                                                           //Включение видимости
     }
 }
-
