@@ -38,6 +38,9 @@ public class ButtonListener implements ActionListener {
 
     //Метод слушания действий для цифр
     private void listenNumbers(JButton currentButton) {
+        if (input.getText().equals("0")) {                         //Если в поле ввод стоит только ноль
+            rewrite = true;                                       //Включить перезапись
+        }
         if (rewrite) {                                             //Если разрешена перезапись
             this.input.setText(currentButton.getText());           //Записать в поле ввод цифру нажатой кнопки
             rewrite = false;                                       //Запретить перезапись
@@ -82,7 +85,8 @@ public class ButtonListener implements ActionListener {
 
             case "=":                                                        //Если нажата кнопка =
 
-                if (history.getText().equals("0") && input.getText().equals("0")) break;    //Если поля история и ввод пустые, то ничего не произойдет
+                if (history.getText().equals("0") && input.getText().equals("0"))
+                    break;    //Если поля история и ввод пустые, то ничего не произойдет
 
                 if (history.getText().indexOf('=') != -1) {                  //Если в поле история уже есть символы равно
                     history.setText(formatString(String.valueOf(answer)));   //Записать в поле история информацию из поля ответ
@@ -97,16 +101,18 @@ public class ButtonListener implements ActionListener {
                     break;
                 }
 
-                if (checkSign(String.valueOf(history.getText().charAt(history.getText().length() - 2))) && !input.getText().equals("0")) {  //Если в поле история на последнем месте записан символ и поле ввод не пустое
+                if (checkSign(String.valueOf(history.getText().charAt(history.getText().length() - 2)))) {                             //Если в поле история на последнем месте записан символ и поле ввод не пустое
                     char earlySgn = history.getText().charAt(history.getText().length() - 2);                                          //Записать последний знак в переменную
-                    answer = calculation(earlySgn, answer, input);                                                                     //Вычислить результат последнего действия и записать результат в поле ответ
-                    text.append(history.getText()).                                                                                    //Считать в конструктор поле история
-                            append(input.getText()).                                                                                   //Добавить к нему содержимое поля ввод
-                            append(" = ");                                                                                             //Добавить знак равно
-                    history.setText(text.toString());                                                                                  //Записать в поле история значение из конструктора
-                    input.setText(formatString(String.valueOf(answer)));                                                               //Записать в поле ввод отформатированное значение из поля ответ
-                    text.setLength(0);                                                                                                 //Очистить конструктор
-                    rewrite = true;                                                                                                    //Разрешить перезапись
+                    if (!errorDivZero(earlySgn)) {                                                                                     //Если в выражении не происходит деления на ноль
+                        answer = calculation(earlySgn, answer, input);                                                                 //Вычислить результат последнего действия и записать результат в поле ответ
+                        text.append(history.getText()).                                                                                //Считать в конструктор поле история
+                                append(input.getText()).                                                                               //Добавить к нему содержимое поля ввод
+                                append(" = ");                                                                                         //Добавить знак равно
+                        history.setText(text.toString());                                                                              //Записать в поле история значение из конструктора
+                        input.setText(formatString(String.valueOf(answer)));                                                           //Записать в поле ввод отформатированное значение из поля ответ
+                        text.setLength(0);                                                                                             //Очистить конструктор
+                        rewrite = true;                                                                                                //Разрешить перезапись
+                    }
                     break;
                 }
 
@@ -139,50 +145,52 @@ public class ButtonListener implements ActionListener {
 
     //Метод ввод арифметического знака
     private void inputMathSign(char sgn) {
-        if (history.getText().equals("0") && !input.getText().equals("0")) {         //Если в поле история записан ноль
-            text.append(formatString(input.getText())).                              //Считать отформатированное поле ввод в конструктор
-                    append(" ").
-                    append(sgn).                                                     //Добавить символ арифметического действия (аргумент метода)
-                    append(" ");
-            history.setText(text.toString());                                        //Записать в поле история содержимое конструктора
-            answer = Float.parseFloat(input.getText());                              //Записать в переменную ответ значение поля ввод
-            text.setLength(0);                                                       //Очистить конструктор
-        } else {                                                                     //Иначе, если в поле история не ноль
-            if (history.getText().charAt(history.getText().length() - 1) != ' ') {   //Если последний символ в поле история не пробел
-                text.append(history.getText()).                                      //Считать в конструктор поле история
+        if (!errorDivZero(sgn)) {                                                        //Если в выражении не происходит деления на ноль
+            if (history.getText().equals("0") && !input.getText().equals("0")) {         //Если в поле история записан ноль а поле ввод не пустое
+                text.append(formatString(input.getText())).                              //Считать отформатированное поле ввод в конструктор
                         append(" ").
-                        append(sgn).                                                 //Добавить символ арифметического действия
+                        append(sgn).                                                     //Добавить символ арифметического действия (аргумент метода)
                         append(" ");
-                history.setText(text.toString());                                    //Записать в поле история содержимое конструктора
-                text.setLength(0);                                                   //Очитстить конструктор
-            } else if (history.getText().indexOf('=') != -1) {                       //Если в поле история встречен знак равно
-                text.append(formatString(String.valueOf(answer))).                   //Считать поле ответ в конструктор
-                        append(" ").
-                        append(sgn).                                                 //Добавить символ арифметического действия
-                        append(" ");
-                history.setText(text.toString());                                    //Записать в поле история содержимое конструктора
-                text.setLength(0);                                                   //Очистить конструктор
-            } else if (checkSign(String.valueOf(history.getText().charAt(history.getText().length() - 2))) &&   //Если предпоследний знак в поле история является символом
-                    history.getText().charAt(history.getText().length() - 2) != sgn &&                          //И этот символ не равен символу на нажатой кнопке
-                    (input.getText().equals("0") || Double.parseDouble(input.getText()) == answer)) {           //И в поле ввод стоит либо ноль, либо ответ
-                text.append(history.getText()).                                                                 //Считать в конструктор поле история
-                        delete(history.getText().length() - 3, history.getText().length()).                     //Удалить последние 3 символа
-                        append(" ").
-                        append(sgn).                                                                            //Добавить текущий символ арифметического действия
-                        append(" ");
-                history.setText(text.toString());                                                               //Записать в поле история содержимое конструктора
-                text.setLength(0);                                                                              //Очистить конструктор
-            } else {                                                                                            //Если не выполнено ни одно предыдущее условие
-                char earlySgn = history.getText().charAt(history.getText().length() - 2);                       //Считать в переменную последний символ в строке
-                answer = calculation(earlySgn, answer, input);                                                  //Выполнить вычисления и записать результат в переменную ответ
-                text.append(history.getText()).                                                                 //Считать в конструктор поле история
-                        append(formatString(input.getText())).                                                  //Добавить отформатированное содержимое поля ввод
-                        append(" ").
-                        append(sgn).                                                                            //Добавить знак арифметического действия
-                        append(" ");
-                history.setText(text.toString());                                                               //Записать в историю содержимое конструктора
-                input.setText(String.valueOf(answer));                                                          //Записать в поле ввод содержимое поля ответ
-                text.setLength(0);                                                                              //Очистить конструктор
+                history.setText(text.toString());                                        //Записать в поле история содержимое конструктора
+                answer = Float.parseFloat(input.getText());                              //Записать в переменную ответ значение поля ввод
+                text.setLength(0);                                                       //Очистить конструктор
+            } else {                                                                     //Иначе, если в поле история не ноль
+                if (history.getText().charAt(history.getText().length() - 1) != ' ') {   //Если последний символ в поле история не пробел
+                    text.append(history.getText()).                                      //Считать в конструктор поле история
+                            append(" ").
+                            append(sgn).                                                 //Добавить символ арифметического действия
+                            append(" ");
+                    history.setText(text.toString());                                    //Записать в поле история содержимое конструктора
+                    text.setLength(0);                                                   //Очитстить конструктор
+                } else if (history.getText().indexOf('=') != -1) {                       //Если в поле история встречен знак равно
+                    text.append(formatString(String.valueOf(answer))).                   //Считать поле ответ в конструктор
+                            append(" ").
+                            append(sgn).                                                 //Добавить символ арифметического действия
+                            append(" ");
+                    history.setText(text.toString());                                    //Записать в поле история содержимое конструктора
+                    text.setLength(0);                                                   //Очистить конструктор
+                } else if (checkSign(String.valueOf(history.getText().charAt(history.getText().length() - 2))) &&   //Если предпоследний знак в поле история является символом
+                        history.getText().charAt(history.getText().length() - 2) != sgn &&                          //И этот символ не равен символу на нажатой кнопке
+                        (input.getText().equals("0") || Double.parseDouble(input.getText()) == answer)) {           //И в поле ввод стоит либо ноль, либо ответ
+                    text.append(history.getText()).                                                                 //Считать в конструктор поле история
+                            delete(history.getText().length() - 3, history.getText().length()).                     //Удалить последние 3 символа
+                            append(" ").
+                            append(sgn).                                                                            //Добавить текущий символ арифметического действия
+                            append(" ");
+                    history.setText(text.toString());                                                               //Записать в поле история содержимое конструктора
+                    text.setLength(0);                                                                              //Очистить конструктор
+                } else {                                                                                            //Если не выполнено ни одно предыдущее условие
+                    char earlySgn = history.getText().charAt(history.getText().length() - 2);                       //Считать в переменную последний символ в строке
+                    answer = calculation(earlySgn, answer, input);                                                  //Выполнить вычисления и записать результат в переменную ответ
+                    text.append(history.getText()).                                                                 //Считать в конструктор поле история
+                            append(formatString(input.getText())).                                                  //Добавить отформатированное содержимое поля ввод
+                            append(" ").
+                            append(sgn).                                                                            //Добавить знак арифметического действия
+                            append(" ");
+                    history.setText(text.toString());                                                               //Записать в историю содержимое конструктора
+                    input.setText(formatString(String.valueOf(answer)));                                                          //Записать в поле ввод содержимое поля ответ
+                    text.setLength(0);                                                                              //Очистить конструктор
+                }
             }
         }
     }
@@ -218,20 +226,35 @@ public class ButtonListener implements ActionListener {
     //Метод для форматирования строки - подавления хвостовых нулей
     private String formatString(String str) {                           //Аргумент метода - произвольная строка, поле для записи отформатированного значения
         char sign;                                                       //Объявление переменной для хранения символа
-        do {                                                            //Старт цикла с постусловием
-            sign = str.charAt(str.length() - 1);                         //Запись последнего символа строки в переменную
-            if (sign == '0') {                                           //Если в переменной записан ноль
-                formatString.append(str).                               //Записать значение строки в конструктор
-                        setLength(str.length() - 1);                    //Уменьшить длину строки на единицу
-                str = formatString.toString();                          //Записать значение конструктора в переменную со строкой
+        if (str.length() > 1) {
+            do {                                                            //Старт цикла с постусловием
+                sign = str.charAt(str.length() - 1);                         //Запись последнего символа строки в переменную
+                if (sign == '0') {                                           //Если в переменной записан ноль
+                    formatString.append(str).                               //Записать значение строки в конструктор
+                            setLength(str.length() - 1);                    //Уменьшить длину строки на единицу
+                    str = formatString.toString();                          //Записать значение конструктора в переменную со строкой
+                }
+            } while (sign == '0');                                           //Цикл выполняется пока в переменной записан ноль
+            if (sign == '.') {                                               //Проверка условия. Если в переменной записана точка (подавлены все нули дробной части)
+                formatString.append(str).                                   //Записать значение строки в конструктор
+                        setLength(str.length() - 1);                        //Уменьшить длину строки на единицу
+                str = formatString.toString();                              //Записать значение конструктора в переменную со строкой
             }
-        } while (sign == '0');                                           //Цикл выполняется пока в переменной записан ноль
-        if (sign == '.') {                                               //Проверка условия. Если в переменной записана точка (подавлены все нули дробной части)
-            formatString.append(str).                                   //Записать значение строки в конструктор
-                    setLength(str.length() - 1);                        //Уменьшить длину строки на единицу
-            str = formatString.toString();                              //Записать значение конструктора в переменную со строкой
+            formatString.setLength(0);                                      //Очистить конструктор
         }
-        formatString.setLength(0);                                      //Очистить конструктор
-        return str;                                                     //Вернуть строковое значение переменной
+        return str;                                                         //Вернуть строковое значение переменной
+    }
+
+    //Метод проверки деления на ноль
+    private boolean errorDivZero(char sgn) {
+        if (sgn == '\u00F7' &&                                              //Если введен знак разделить
+                input.getText().equals("0") &&                              //И в поле ввод стоит ноль
+                !history.getText().equals("0")) {                           //А поле история не пустое
+            history.setText("0");                                           //Записать в поле история ноль
+            input.setText("Ошибка! Деление на ноль!");                      //В поле ввод вывести сообщение об ошибке
+            rewrite = true;                                                 //Включить перезапись
+            return true;                                                    //Вернуть true
+        }
+        return false;
     }
 }
