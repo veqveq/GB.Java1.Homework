@@ -80,6 +80,7 @@ public class Utilities {
 
     //Метод, проверяющий - является ли символ числом
     public boolean checkSign(String sign) {                     //Аргумент метода - символ
+        if (sign.equals(".")) return false;
         for (int i = 0; i <= 9; i++) {                          //Цикл проходит все однозначные числа
             if (sign.equals(String.valueOf(i))) return false;   //Если символ равен однозначному числу - вернуть false
         }

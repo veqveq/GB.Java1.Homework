@@ -13,7 +13,7 @@ public class Action{
     protected void action(){
         if (key.length() != 0) {                                        //Если аргумент класса не нулевой
             Listen listenButton;                                        //Создать объект класса слушатель
-            if (!new Utilities().checkSign(key)) {                      //Если кнопка не является символом
+            if (!util.checkSign(key) && !key.equals(".")) {             //Если кнопка не является символом
                 listenButton = new ListenNumbs(key);                    //Создать класс слушатель цифр - наследника слушателя
             } else if (key.charAt(0) == 'M') {                          //Иначе если первый символ на нажатой кнопке M
                 listenButton = new ListenMemory(key, util);             //Создать класс слушатель памяти - наследника слушателя

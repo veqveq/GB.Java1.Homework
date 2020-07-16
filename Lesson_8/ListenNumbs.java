@@ -12,9 +12,10 @@ public class ListenNumbs extends Listen {                               //Кла
         if (MyWindow.input.getText().equals("0")) {                         //Если в поле ввод стоит только ноль
             MyWindow.rewrite = true;                                        //Включить перезапись
         }
+
         if (MyWindow.rewrite) {                                             //Если разрешена перезапись
-            MyWindow.input.setText(key);                                    //Записать в поле ввод цифру нажатой кнопки
-            MyWindow.rewrite = false;                                       //Запретить перезапись
+                MyWindow.input.setText(key);                                //Записать в поле ввод цифру нажатой кнопки
+                MyWindow.rewrite = false;                                   //Запретить перезапись
         } else {                                                            //Иначе
             text.append(MyWindow.input.getText())                           //Считать в конструктор строк значение из поля ввод
                     .append(key);                                           //Добавить к нему цифру нажатой кнопки

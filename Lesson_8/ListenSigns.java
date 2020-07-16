@@ -15,10 +15,10 @@ public class ListenSigns extends Listen {                               //Кла
         switch (key) {                                              //Проверка множественного условия
             case ".":                                               //Если нажата кнопка с точкой
                 if (MyWindow.rewrite) {                             //Если включена перезапись
-                    text.append("0").
-                            append(key);
-                    MyWindow.input.setText(text.toString());        //Вписать в поле ввод точку
-                    text.setLength(0);
+                    text.append("0").                               //Вписать в конструктор 0
+                            append(key);                            //Добавить в конце точку
+                    MyWindow.input.setText(text.toString());        //Вписать в поле ввод содержимое конструктора
+                    text.setLength(0);                              //Очистить конструктор
                     MyWindow.rewrite = false;                       //Выключить перезапись
                 }
                 if (!MyWindow.input.getText().contains(".")) {               //Проверить, есть ли точки в строке ввод
