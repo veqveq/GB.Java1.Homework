@@ -2,8 +2,19 @@ package Calculator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 
 public class MyWindow extends JFrame {
+
+    //Задание служебных переменных
+    protected static String answer = "0";                               //Создание переменной для хранения результата вычислений
+    protected static String memory = "0";                               //Создание переменной для хранения памяти калькулятора
+    protected static boolean rewrite;                                   //Создание переменной отвечающей за перезапись поля ввод
+
+    protected static JLabel history = new JLabel("0", SwingConstants.RIGHT);       //Создание поля для вывода записанного выражения
+    protected static JLabel input = new JLabel("0", SwingConstants.RIGHT);         //Создание поля для ввода текщего числа и вывода результата
+    protected static JLabel memoryIndicate = new JLabel();                             //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
+
     public MyWindow() {
         //Инициализация окна программы
         setTitle("Калькулятор");                                      //Название
@@ -24,14 +35,8 @@ public class MyWindow extends JFrame {
         inpPrint.setLayout(new GridLayout(2, 1));             //Задание стиля разметки панели ввода-вывода
         memInpPrint.setLayout(new GridBagLayout());                     //Задание стиля разметки панели ввода-вывода-памяти
 
-        //Задание служебных переменных
-        float answer = 0;                                                   //Создание переменной для хранения результата вычислений
-        float memory = 0;                                                   //Создание переменной для хранения памяти калькулятора
 
-        //Создание графического интерфейса
-        JLabel history = new JLabel("0", SwingConstants.RIGHT);       //Создание поля для вывода записанного выражения
-        JLabel input = new JLabel("0", SwingConstants.RIGHT);         //Создание поля для ввода текщего числа и вывода результата
-        JLabel memoryIndicate = new JLabel();                             //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
+        //Настройка графического интерфейса
         memoryIndicate.setVerticalAlignment(SwingConstants.BOTTOM);       //Настройка выравнивания индикатора памяти калькулятора
         history.setFont(new Font("", Font.PLAIN, 30));          //Настройка шрифта поля вывода
         input.setFont(new Font("", Font.BOLD, 80));             //Настройка шрифта поля ввода
@@ -43,16 +48,20 @@ public class MyWindow extends JFrame {
         gbc.weightx = 0f;                                                 //Ширина контейнера индикатора памяти фиксирована
         gbc.fill = GridBagConstraints.BOTH;
         memInpPrint.add(memoryIndicate, gbc);                              //Добавление индикатора памяти в панель ввод-вывод-память
-        gbc.weightx = 1f;                                                 //Ширина панели ввода-вывода не фиксирована
+        gbc.weightx = 1f;                                                  //Ширина панели ввода-вывода не фиксирована
         memInpPrint.add(inpPrint, gbc);                                    //Добавление панели ввода-вывода в панель ввод-вывод-память
 
-        ButtonListener buttonListener = new ButtonListener(input, history, answer, memory, memoryIndicate);   //Создание слушателя действий для кнопок
+        ButtonListener buttonListener = new ButtonListener();              //Создание слушателя действий для кнопок
+        KeyListener keyboardListener = new KeyboardListener();             //Создание слушателя нажатия кнопок на клавиатуре
+        addKeyListener(keyboardListener);                                  //Добавление слушателя нажатий кнопок форме
+        setFocusable(true);                                                //Установка фокусировки на форму по умолчанию
 
         JButton[] numbs = new JButton[10];                                          //Объявление массива кнопок с цифрами
         for (int i = 0; i < numbs.length; i++) {                                    //Счётчик прохода всех однозначных чисел
             numbs[i] = new JButton(String.valueOf(i));                              //Создание новой кнопки с номером счётчика и запись в массив
             numbs[i].setFont(new Font("", Font.PLAIN, 24));               //Настройка шрифта на кнопке
             numbs[i].addActionListener(buttonListener);                             //Назначение кнопке слушателя действий
+            numbs[i].addKeyListener(keyboardListener);
             keyboard.add(numbs[i]);                                                 //Добавление кнопки в панель клавиатура
         }
 
@@ -74,17 +83,18 @@ public class MyWindow extends JFrame {
 
         for (int i = 0; i < memoryKeys.length; i++) {                               //Цикл для инициализации массива кнопок для работы с памятью
             memoryKeys[i].setFont(new Font("", Font.PLAIN, 18));          //Настройка шрифта кнопки
-            memoryKeys[i].setBackground(new Color(205, 205, 205));          //Изменение цвета кнопки
+            memoryKeys[i].setBackground(new Color(168, 163, 163));          //Изменение цвета кнопки
             memoryKeys[i].addActionListener(buttonListener);                        //Добавление кнопке слушателя действий
+            memoryKeys[i].addKeyListener(keyboardListener);
             operations.add(memoryKeys[i]);                                          //Добавление кнопки в панель операций
         }
 
         for (int i = 0; i < operators.length; i++) {                                //Цикл для инициализации массива кнопок с операциями
             operators[i].setFont(new Font("", Font.PLAIN, 24));           //Настройка шрифта на кнопке
             operators[i].addActionListener(buttonListener);                         //Добавление кнопке слушателя действий
+            operators[i].addKeyListener(keyboardListener);
             operations.add(operators[i]);                                           //Добавление кнопки в панель операции
         }
-
 
         add(memInpPrint);                                                           //Добавление панели ввода-вывода-памяти на форму
         add(operations);                                                            //Добавление панели операции на форму

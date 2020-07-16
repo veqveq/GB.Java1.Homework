@@ -5,4 +5,3 @@ class Main {
         MyWindow window = new MyWindow();   //Создание окна калькулятора
     }
 }
-
