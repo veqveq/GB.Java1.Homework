@@ -23,7 +23,7 @@ public class ListenMemory extends Listen {                  //Класс слу�
                 break;
             default:
                 char earlySgn = key.charAt(1);                                                                  //Записать в переменную 2 символ с названия кнопки (+/-)
-                MyWindow.setMemory(util.calculation(earlySgn, MyWindow.getMemory(), MyWindow.input.getText()));        //Добавить/вычесть в памяти значение из поля ввод
+                MyWindow.setMemory(util.calculation(String.valueOf(earlySgn), MyWindow.getMemory(), MyWindow.input.getText()));        //Добавить/вычесть в памяти значение из поля ввод
                 MyWindow.memoryIndicate.setText("M");                                                           //Включить индикатор памяти
                 MyWindow.setRewrite(true);                                                                       //Разрешить перезапись
         }

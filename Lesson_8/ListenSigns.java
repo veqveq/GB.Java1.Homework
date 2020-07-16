@@ -47,18 +47,180 @@ public class ListenSigns extends Listen {                               //Кла
                 }
                 break;
 
-            case "=":                                                                                         //Если нажата кнопка =
+            case "%":
+                if (!MyWindow.history.getText().equals("0") &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1) == ' ' &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2) != '=') {
+                    char earlySgn = MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2);
+                    MyWindow.input.setText(util.formatString(util.calculation(key, MyWindow.getAnswer(), MyWindow.input.getText())));
+                    text.append(MyWindow.history.getText()).
+                            append(MyWindow.input.getText());
+                    MyWindow.history.setText(text.toString());
+                    text.setLength(0);
+                    MyWindow.setAnswer(util.calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), MyWindow.input.getText()));
+                    MyWindow.setRewrite(true);
+                    break;
+                }
 
+            case "1/x":
+                if (!MyWindow.history.getText().equals("0") &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1) == ' ' &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2) != '=') {
+                    char earlySgn = MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2);
+                    MyWindow.setAnswer(util.calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), util.formatString(util.calculation(key, MyWindow.input.getText()))));
+                    text.append(MyWindow.history.getText());
+                    if (Float.parseFloat(MyWindow.input.getText()) > 0) {
+                        text.append("1 / ").
+                                append(MyWindow.input.getText());
+                    } else {
+                        text.append("1 / (").
+                                append(MyWindow.input.getText()).
+                                append(")");
+                    }
+                    MyWindow.history.setText(text.toString());
+                    MyWindow.input.setText(MyWindow.getAnswer());
+                    MyWindow.setRewrite(true);
+                    text.setLength(0);
+                    break;
+                }
+                if (MyWindow.input.getText().equals("0")) {
+                    MyWindow.input.setText("Ошибка!");
+                    MyWindow.history.setText("0");
+                    MyWindow.setAnswer("0");
+                    MyWindow.setRewrite(true);
+                    break;
+                }
+                MyWindow.setAnswer(util.formatString(util.calculation(key, MyWindow.input.getText())));
+                if (Float.parseFloat(MyWindow.input.getText()) > 0) {
+                    text.append("1 / ").
+                            append(MyWindow.input.getText());
+                } else {
+                    text.append("1 / (").
+                            append(MyWindow.input.getText()).
+                            append(")");
+                }
+                MyWindow.history.setText(text.toString());
+                MyWindow.input.setText(MyWindow.getAnswer());
+                MyWindow.setRewrite(true);
+                text.setLength(0);
+                break;
+
+            case "±":
+                if (!MyWindow.input.getText().equals("0")) {
+                    if (MyWindow.input.getText().charAt(0) != '-') {
+                        text.append("-").
+                                append(MyWindow.input.getText());
+                    } else {
+                        text.append(MyWindow.input.getText()).
+                                deleteCharAt(0);
+                    }
+                    MyWindow.input.setText(text.toString());
+                    text.setLength(0);
+                }
+                break;
+
+            case "√":
+                if (!MyWindow.history.getText().equals("0") &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1) == ' ' &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2) != '=') {
+                    char earlySgn = MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2);
+                    MyWindow.setAnswer(util.calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), util.formatString(util.calculation(key, MyWindow.input.getText()))));
+                    text.append(MyWindow.history.getText()).
+                            append(key).
+                            append(MyWindow.input.getText());
+                    MyWindow.history.setText(text.toString());
+                    MyWindow.input.setText(MyWindow.getAnswer());
+                    MyWindow.setRewrite(true);
+                    text.setLength(0);
+                    break;
+                }
+                if (Float.parseFloat(MyWindow.input.getText()) < 0) {
+                    MyWindow.history.setText("0");
+                    MyWindow.input.setText("Ошибка!");
+                    MyWindow.setAnswer("0");
+                    MyWindow.setRewrite(true);
+                    break;
+                }
+                MyWindow.setAnswer(util.formatString(util.calculation(key, MyWindow.input.getText())));
+                text.append(key).
+                        append(MyWindow.input.getText());
+                MyWindow.history.setText(text.toString());
+                MyWindow.input.setText(MyWindow.getAnswer());
+                MyWindow.setRewrite(true);
+                text.setLength(0);
+                break;
+
+            case "∛":
+                if (!MyWindow.history.getText().equals("0") &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1) == ' ' &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2) != '=') {
+                    text.append(MyWindow.history.getText()).
+                            append(key).
+                            append(MyWindow.input.getText());
+                    char earlySgn = MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2);
+                    MyWindow.setAnswer(util.calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), util.formatString(util.calculation(key, MyWindow.input.getText()))));
+                    MyWindow.history.setText(text.toString());
+                    MyWindow.input.setText(MyWindow.getAnswer());
+                    MyWindow.setRewrite(true);
+                    text.setLength(0);
+                    break;
+                }
+                MyWindow.setAnswer(util.formatString(util.calculation(key, MyWindow.input.getText())));
+                text.append(key).append(MyWindow.input.getText());
+                MyWindow.history.setText(text.toString());
+                MyWindow.input.setText(MyWindow.getAnswer());
+                MyWindow.setRewrite(true);
+                text.setLength(0);
+                break;
+
+            case "x²":
+                if (!MyWindow.history.getText().equals("0") &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1) == ' ' &&
+                        MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2) != '=') {
+                    text.append(MyWindow.history.getText()).
+                            append(MyWindow.input.getText()).
+                            append("²");
+                    char earlySgn = MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2);
+                    MyWindow.setAnswer(util.calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), util.formatString(util.calculation(key, MyWindow.input.getText()))));
+                    MyWindow.history.setText(text.toString());
+                    MyWindow.input.setText(MyWindow.getAnswer());
+                    MyWindow.setRewrite(true);
+                    text.setLength(0);
+                    break;
+                }
+                MyWindow.setAnswer(util.formatString(util.calculation(key, MyWindow.input.getText())));
+                text.append(MyWindow.input.getText()).append("²");
+                MyWindow.history.setText(text.toString());
+                MyWindow.input.setText(MyWindow.getAnswer());
+                MyWindow.setRewrite(true);
+                text.setLength(0);
+                break;
+
+            case "=":                                                                                         //Если нажата кнопка =
                 if (MyWindow.history.getText().equals("0") && MyWindow.input.getText().equals("0"))           //Если поля история и ввод пустые, то ничего не произойдет
                     break;
 
-                if (!MyWindow.history.getText().equals(MyWindow.input.getText()) &&                                                     //Если содержимое истории не совпадает с содержимым ввода
-                        !util.checkSign(String.valueOf(MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1)))) {  //И в конце поля история не символ
-                    MyWindow.history.setText(util.formatString(MyWindow.input.getText()));                                              //Записать в историю содержимое поля ввод
-                    MyWindow.setAnswer(MyWindow.input.getText());                                                                    //Записать в переменную ответ содержимое поля ввод
-                    MyWindow.setRewrite(true);                                                                                            //Разрешить перезапись
+                if (!MyWindow.getAnswer().equals("0") &&
+                        !MyWindow.history.getText().equals("0") &&
+                        !MyWindow.history.getText().contains("=") &&
+                        !util.checkSign(String.valueOf(MyWindow.history.getText().charAt(MyWindow.history.getText().length()-1)))){
+                    text.append(MyWindow.history.getText()).
+                            append(" ").
+                            append(key).
+                            append(" ");
+                    MyWindow.history.setText(text.toString());
+                    MyWindow.input.setText(MyWindow.getAnswer());
                     break;
                 }
+
+
+                    if (!MyWindow.history.getText().equals(MyWindow.input.getText()) &&                                                     //Если содержимое истории не совпадает с содержимым ввода
+                            !util.checkSign(String.valueOf(MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1)))) {  //И в конце поля история не символ
+                        MyWindow.history.setText(util.formatString(MyWindow.input.getText()));                                              //Записать в историю содержимое поля ввод
+                        MyWindow.setAnswer(MyWindow.input.getText());                                                                    //Записать в переменную ответ содержимое поля ввод
+                        MyWindow.setRewrite(true);                                                                                            //Разрешить перезапись
+                        break;
+                    }
 
                 if (MyWindow.history.getText().contains("=")) {
                     if (MyWindow.input.getText().equals("0") ||
@@ -88,7 +250,7 @@ public class ListenSigns extends Listen {                               //Кла
                         text.setLength(0);                                                                                          //Очистить конструкт
                     }
                     if (!util.errorDivZero(earlySgn)) {                                                                               //Если в выражении не происходит деления на ноль
-                        MyWindow.setAnswer(util.calculation(earlySgn, MyWindow.getAnswer(), MyWindow.input.getText()));                      //Вычислить результат последнего действия и записать результат в поле ответ
+                        MyWindow.setAnswer(util.calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), MyWindow.input.getText()));                      //Вычислить результат последнего действия и записать результат в поле ответ
                         text.append(MyWindow.history.getText()).                                                                      //Считать в конструктор поле история
                                 append(util.formatString(MyWindow.input.getText())).                                                  //Добавить к нему содержимое поля ввод
                                 append(" = ");                                                                                        //Добавить знак равно

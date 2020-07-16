@@ -1,6 +1,7 @@
 package Calculator;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 public class Utilities {
@@ -64,7 +65,7 @@ public class Utilities {
                         MyWindow.history.setText(text.toString());                                                                    //Записать в историю содержимое конструктора
                         text.setLength(0);                                                                                            //Очистить конструктор
                     }
-                    MyWindow.setAnswer(calculation(earlySgn, MyWindow.getAnswer(), MyWindow.input.getText()));                               //Выполнить вычисления и записать результат в переменную ответ
+                    MyWindow.setAnswer(calculation(String.valueOf(earlySgn), MyWindow.getAnswer(), MyWindow.input.getText()));                               //Выполнить вычисления и записать результат в переменную ответ
                     text.append(MyWindow.history.getText()).                                                                          //Считать в конструктор поле история
                             append(formatString(MyWindow.input.getText())).                                                           //Добавить отформатированное содержимое поля ввод
                             append(" ").
@@ -88,26 +89,62 @@ public class Utilities {
     }
 
     //Метод выполнения арифметического действия
-    public String calculation(char sgn, String val1, String val2) {         //Аргументы - символ действия, поля ответ и ввод
+    public String calculation(String sgn, String val1, String val2) {         //Аргументы - символ действия, поля ответ и ввод
         BigDecimal bigVal1 = new BigDecimal(val1);                          //Инициализировать большое число равное первому числу
         BigDecimal bigVal2 = new BigDecimal(val2);                          //Инициализировать большое число равное второму числу
         BigDecimal result = new BigDecimal(0);                          //Инициализировать большое число для хранения результата
         switch (sgn) {                                                      //Проверка множественного условия
-            case '+':                                                       //Если переданный символ - плюс
+            case "+":                                                       //Если переданный символ - плюс
                 result = bigVal1.add(bigVal2);                              //Добавить второе число к первому
                 break;
-            case '-':                                                               //Если переданный символ - минус
+            case "-":                                                               //Если переданный символ - минус
                 result = bigVal1.subtract(bigVal2);                                 //Отнять от первого числа второе
                 break;
-            case 'x':                                                               //Если переданный символ - умножить
+            case "x":                                                               //Если переданный символ - умножить
                 result = bigVal1.multiply(bigVal2);                                 //Умножить первое число на второе
                 break;
-            case '\u00F7':                                                          //Если переданный символ - разделить
-                result = bigVal1.divide(bigVal2,10, RoundingMode.HALF_UP);     //Разделить первое число на второе c округлением до 10 разрядов
+            case "\u00F7":                                                          //Если переданный символ - разделить
+                result = bigVal1.divide(bigVal2, 11, RoundingMode.HALF_UP);     //Разделить первое число на второе c округлением до 10 разрядов
+                break;
+            case "%":
+                result = bigVal2.multiply(bigVal1.divide(new BigDecimal(100), 11, RoundingMode.HALF_UP));
                 break;
         }
         return result.toString();                                           //Вернуть ответ
     }
+
+    public String calculation(String sgn, String val1) {         //Аргументы - символ действия, поля ответ и ввод
+        BigDecimal bigVal1 = new BigDecimal(val1);                          //Инициализировать большое число равное первому числу
+        BigDecimal result = new BigDecimal(0);                          //Инициализировать большое число для хранения результата
+        switch (sgn) {                                                      //Проверка множественного условия
+            case "√":
+                result = countRoot(bigVal1, new BigDecimal(2));
+                break;
+            case "∛":
+                result = countRoot(bigVal1, new BigDecimal(3));
+                break;
+            case "x²":
+                result = bigVal1.pow(2, new MathContext(11, RoundingMode.DOWN));
+                break;
+            case "1/x":
+                result = new BigDecimal(1).divide(bigVal1, new MathContext(11));
+                break;
+
+        }
+        return result.toString();                                           //Вернуть ответ
+    }
+
+    private BigDecimal countRoot(BigDecimal val1, BigDecimal val2) {
+        BigDecimal numb = new BigDecimal(1);
+        double res = Math.pow(Math.abs(val1.doubleValue()), 1 / val2.doubleValue());
+        MathContext mc = new MathContext(11, RoundingMode.HALF_UP);
+        BigDecimal result = new BigDecimal(res, new MathContext(1, RoundingMode.DOWN));
+        for (int i = 0; i < 50; i++) {
+            result = (((val2.subtract(numb)).multiply(result)).add(val1.divide(result.pow((val2.subtract(numb)).intValue()), mc))).multiply(numb.divide(val2, mc));
+        }
+        return result.round(mc);
+    }
+
 
     //Метод для форматирования строки - подавления хвостовых нулей
     public String formatString(String str) {                                //Аргумент метода - произвольная строка, поле для записи отформатированного значения
