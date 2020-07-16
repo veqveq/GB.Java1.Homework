@@ -10,7 +10,7 @@ public class Action{
         this.util = new Utilities();
     }
 
-    protected void action(){
+    void action(){
         if (key.length() != 0) {                                        //Если аргумент класса не нулевой
             Listen listenButton;                                        //Создать объект класса слушатель
             if (!util.checkSign(key) && !key.equals(".")) {             //Если кнопка не является символом

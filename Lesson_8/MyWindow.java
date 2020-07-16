@@ -7,13 +7,13 @@ import java.awt.event.KeyListener;
 public class MyWindow extends JFrame {
 
     //Задание служебных переменных
-    protected static String answer = "0";                               //Создание переменной для хранения результата вычислений
-    protected static String memory = "0";                               //Создание переменной для хранения памяти калькулятора
-    protected static boolean rewrite;                                   //Создание переменной отвечающей за перезапись поля ввод
+    private static String answer = "0";                               //Создание переменной для хранения результата вычислений
+    private static String memory = "0";                               //Создание переменной для хранения памяти калькулятора
+    private static boolean rewrite;                                   //Создание переменной отвечающей за перезапись поля ввод
 
-    protected static JLabel history = new JLabel("0", SwingConstants.RIGHT);       //Создание поля для вывода записанного выражения
-    protected static JLabel input = new JLabel("0", SwingConstants.RIGHT);         //Создание поля для ввода текщего числа и вывода результата
-    protected static JLabel memoryIndicate = new JLabel("");                             //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
+    static JLabel history = new JLabel("0", SwingConstants.RIGHT);       //Создание поля для вывода записанного выражения
+    static JLabel input = new JLabel("0", SwingConstants.RIGHT);         //Создание поля для ввода текщего числа и вывода результата
+    static JLabel memoryIndicate = new JLabel("");                       //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
 
     public MyWindow() {
         //Инициализация окна программы
@@ -34,7 +34,6 @@ public class MyWindow extends JFrame {
         operations.setLayout(new GridLayout(3, 4));           //Задание стиля разметки панели со знаками
         inpPrint.setLayout(new GridLayout(2, 1));             //Задание стиля разметки панели ввода-вывода
         memInpPrint.setLayout(new GridBagLayout());                     //Задание стиля разметки панели ввода-вывода-памяти
-
 
         //Настройка графического интерфейса
         memoryIndicate.setVerticalAlignment(SwingConstants.BOTTOM);       //Настройка выравнивания индикатора памяти калькулятора
@@ -101,5 +100,31 @@ public class MyWindow extends JFrame {
         add(keyboard);                                                              //Добавление панели клавиатура на форму
 
         setVisible(true);                                                           //Включение видимости
+    }
+
+    //Создание сеттеров для изменяемых полей
+    public static void setAnswer(String answer) {
+        MyWindow.answer = answer;
+    }
+
+    public static void setMemory(String memory) {
+        MyWindow.memory = memory;
+    }
+
+    public static void setRewrite(boolean rewrite) {
+        MyWindow.rewrite = rewrite;
+    }
+
+    //Создание геттеров для изменяемых полей
+    public static String getAnswer() {
+        return answer;
+    }
+
+    public static String getMemory() {
+        return memory;
+    }
+
+    public static boolean isRewrite() {
+        return rewrite;
     }
 }

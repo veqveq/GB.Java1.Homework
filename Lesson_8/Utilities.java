@@ -17,7 +17,7 @@ public class Utilities {
                         append(sgn).                                                                       //Добавить символ арифметического действия (аргумент метода)
                         append(" ");
                 MyWindow.history.setText(text.toString());                                                 //Записать в поле история содержимое конструктора
-                MyWindow.answer = MyWindow.input.getText();                                                //Записать в переменную ответ значение поля ввод
+                MyWindow.setAnswer(MyWindow.input.getText());                                              //Записать в переменную ответ значение поля ввод
                 text.setLength(0);                                                                         //Очистить конструктор
             } else {                                                                                       //Иначе, если в поле история не ноль
                 if (MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 1) != ' ') {   //Если последний символ в поле история не пробел
@@ -29,8 +29,8 @@ public class Utilities {
                     text.setLength(0);                                                                              //Очитстить конструктор
                 } else if (MyWindow.history.getText().indexOf('=') != -1) {                                         //Если в поле история встречен знак равно
                     if (MyWindow.input.getText().equals("0") ||                                                     //Если в поле ввод стоит ноль
-                            MyWindow.input.getText().equals(formatString(String.valueOf(MyWindow.answer)))) {       //Либо в поле ввод записан ответ
-                        text.append(formatString(String.valueOf(MyWindow.answer))).                                 //Считать поле ответ в конструктор
+                            MyWindow.input.getText().equals(formatString(String.valueOf(MyWindow.getAnswer())))) {       //Либо в поле ввод записан ответ
+                        text.append(formatString(String.valueOf(MyWindow.getAnswer()))).                                 //Считать поле ответ в конструктор
                                 append(" ").
                                 append(sgn).                                                                        //Добавить символ арифметического действия
                                 append(" ");
@@ -41,15 +41,15 @@ public class Utilities {
                                 append(sgn).                                                                        //Добавить знак арифметического действия
                                 append(" ");
                         MyWindow.history.setText(text.toString());                                                  //Записать в поле история содержимое конструктора
-                        MyWindow.answer = MyWindow.input.getText();                                                 //Записать в переменную ответ содержимое поля ввод
+                        MyWindow.setAnswer(MyWindow.input.getText());                                                //Записать в переменную ответ содержимое поля ввод
                         MyWindow.input.setText("0");                                                                //Записать в поле ввод ноль
-                        MyWindow.rewrite = true;                                                                    //Разрешить перезапись
+                        MyWindow.setRewrite(true);                                                                    //Разрешить перезапись
                     }
                     text.setLength(0);                                                                              //Очистить конструктор
 
                 } else if (checkSign(String.valueOf(MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2))) &&   //Если предпоследний знак в поле история является символом
                         MyWindow.history.getText().charAt(MyWindow.history.getText().length() - 2) != sgn &&                          //И этот символ не равен символу на нажатой кнопке
-                        (MyWindow.input.getText().equals("0") || MyWindow.input.getText().equals(MyWindow.answer))) {  //И в поле ввод стоит либо ноль, либо ответ
+                        (MyWindow.input.getText().equals("0") || MyWindow.input.getText().equals(MyWindow.getAnswer()))) {  //И в поле ввод стоит либо ноль, либо ответ
                     text.append(MyWindow.history.getText()).                                                                          //Считать в конструктор поле история
                             delete(MyWindow.history.getText().length() - 3, MyWindow.history.getText().length()).                     //Удалить последние 3 символа
                             append(" ").
@@ -64,14 +64,14 @@ public class Utilities {
                         MyWindow.history.setText(text.toString());                                                                    //Записать в историю содержимое конструктора
                         text.setLength(0);                                                                                            //Очистить конструктор
                     }
-                    MyWindow.answer = calculation(earlySgn, MyWindow.answer, MyWindow.input.getText());                               //Выполнить вычисления и записать результат в переменную ответ
+                    MyWindow.setAnswer(calculation(earlySgn, MyWindow.getAnswer(), MyWindow.input.getText()));                               //Выполнить вычисления и записать результат в переменную ответ
                     text.append(MyWindow.history.getText()).                                                                          //Считать в конструктор поле история
                             append(formatString(MyWindow.input.getText())).                                                           //Добавить отформатированное содержимое поля ввод
                             append(" ").
                             append(sgn).                                                                                              //Добавить знак арифметического действия
                             append(" ");
                     MyWindow.history.setText(text.toString());                                                                        //Записать в историю содержимое конструктора
-                    MyWindow.input.setText(formatString(String.valueOf(MyWindow.answer)));                                            //Записать в поле ввод содержимое поля ответ
+                    MyWindow.input.setText(formatString(String.valueOf(MyWindow.getAnswer())));                                            //Записать в поле ввод содержимое поля ответ
                     text.setLength(0);                                                                                                //Очистить конструктор
                 }
             }
@@ -139,7 +139,7 @@ public class Utilities {
                 !MyWindow.history.getText().equals("0")) {                  //А поле история не пустое
             MyWindow.history.setText("0");                                  //Записать в поле история ноль
             MyWindow.input.setText("Ошибка! Деление на ноль!");             //В поле ввод вывести сообщение об ошибке
-            MyWindow.rewrite = true;                                        //Включить перезапись
+            MyWindow.setRewrite(true);                                      //Включить перезапись
             return true;                                                    //Вернуть true
         }
         return false;
