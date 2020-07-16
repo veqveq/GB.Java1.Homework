@@ -13,7 +13,7 @@ public class MyWindow extends JFrame {
 
     protected static JLabel history = new JLabel("0", SwingConstants.RIGHT);       //Создание поля для вывода записанного выражения
     protected static JLabel input = new JLabel("0", SwingConstants.RIGHT);         //Создание поля для ввода текщего числа и вывода результата
-    protected static JLabel memoryIndicate = new JLabel();                             //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
+    protected static JLabel memoryIndicate = new JLabel("");                             //Создание поля для вывода индикатора присутствия данных в памяти калькулятора
 
     public MyWindow() {
         //Инициализация окна программы
